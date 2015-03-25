@@ -4,10 +4,10 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>Building REST API SDK's with Requests</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="API SDK's USING REQUESTS">
+		<meta name="author" content="Hayden Chudy">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -15,7 +15,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+		<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
 
 		<!-- Code syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -41,24 +41,401 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h1>Reveal.js</h1>
-					<h3>The HTML Presentation Framework</h3>
+					<h2>API SDK's USING REQUESTS</h2>
 					<p>
-						<small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
+						<small>Created by <a href="http://www.haydenchudy.com">Hayden Chudy</a> / <a href="http://twitter.com/hjc1710">@hjc1710</a></small>
 					</p>
 				</section>
 
 				<section>
-					<h2>Hello There</h2>
+					<h2>About Me</h2>
 					<p>
-						reveal.js enables you to create beautiful interactive slide decks using HTML. This presentation will show you examples of what it can do.
+						<ul>
+							<li>	
+								Backend Engineer at Croscon.
+							</li>
+							<li>
+								Originally from Southern Alabama, lived in NYC since March 2013.
+							</li>
+							<li>
+								Build cool projects for interesting clients.
+							</li>
+						</ul>	
 					</p>
+					<aside class="notes">
+						Remember, we're fucking hiring backend engineers. Engineers and Junior Engineers, Python and PHP.
+					</aside>
 				</section>
 
 				<!-- Example of nested vertical slides -->
 				<section>
+					<h2>Some Quick Definitions</h2>
+					<p>
+						<ul>
+							<li>
+								API - Application Programming Interface
+							</li>
+							<li>
+								SDK - Software Development Kit
+							</li>
+							<li>
+								REST - Representational State Transfer
+							</li>
+						</ul>
+					</p>
+					<aside class="notes">
+						API - a set of routines or protocols used to build or interact with a piece of software.
+						<br>
+						SDK - a set of tools that aid in the creation of applications for a certain platform, framework, or software package.
+						<br>
+						REST - an architecture pattern that is popular in the creation of scalable web services. Basically: no state, and a uniform interface for accessing resources.
+					</aside>
+				</section>
+
+				<section>
+					<h2>SDK Examples</h2>
+
+					<ul>
+						<li>
+							Google's oauth2client - github.com/google/oauth2client
+						</li>
+						<li>
+							Instagram's Python API SDK - github.com/Instagram/python-instagram
+						</li>
+						<li>
+							Twitter's Python API SDK - github.com/bear/python-twitter
+						</li>
+						<li>
+							Tumblr's Python API SDK - github.com/tumblr/pytumblr
+						</li>
+					</ul>
+
+					<aside class="notes">
+						Google has one for Python.
+						<br>
+						Instagram has one for Python.
+						<br>
+						Twitter has one for Python.
+						<br>
+						TUMBLR has one for Python....
+						<br>
+						But no Facebook SDK.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Facebook's "Python SDK"</h2>
+					<img src="img/facebook_sdks.png" height="575px;">
+
+					<aside class="notes">
+						So, one begins to look for a FB SDK and this is what they find.
+						<br>
+						Nada.
+						<br>
+						Sidenote, I love how they have a qt SDK, and an official Django SDK, but no official Python SDK. 
+						<br>
+						Small message on how we use Flask, so Django one won't work
+					</aside>
+				</section>
+
+				<section>
+					<h2>Facebook's "Python SDK"</h2>
+					<p>
+						Unofficial SDK's:
+
+						<br>
+						<br>
+						<ul>
+							<li>
+								pythonforfacebook - github.com/pythonforfacebook/facebook-sdk
+							</li>
+							<li>
+								fb - github.com/blaklites/fb
+							</li>
+						</ul>
+
+						<aside class="notes">
+							So, we stumble upon two unofficial SDK's for Facebook written in Python.
+							<br>
+							Upon closer examination, both have an identical API and have the same version of
+							0.4.0, last updated about 2 years ago.
+							<br>
+							<br>
+							It's likely these are forks of an unsuccessful original FB SDK. The only updates
+							that have happened are documentation changes.
+						</aside>
+					</p>
+				</section>
+
+				<section>
+					<h2>Solution?</h2>
+					<p>
+						We'll roll our own!
+					</p>
+
+					<aside class="notes">
+						So, we'll just make our own with our own little API!
+					</aside>
+				</section>
+
+				<section>
+					<h2>Where to begin?</h2>
+
+					<ul>
+						<li>
+							Read the API Reference.
+						</li>
+						<li>
+							Pick an existing HTTP library to help you do your job.
+						</li>
+						<li>
+							Software library architectural fun times.
+						</li>
+					</ul>
+
+					<aside class="notes">
+						We have a LOT to do here! Mostly in steps 1 and 3.
+						<br>
+						API references are quite complex and writing a module well is too, so points
+						1 and 3 won't be covered (though, hopefully, I'll return to cover point 3 in
+						the future). So let's handle number 2 and pick an HTTP library
+						<br>
+						So, from here, an individual could go one of two ways. 
+						<br>
+						The first way is to exclusively use built-in Python modules.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Built-in Python HTTP Modules</h2>
+					<p>
+						<ul>
+							<li>httplib</li>
+							<li>urllib</li>
+							<li>urllib2</li>
+							<li>urlparse</li>
+							<li>mimetools</li>
+							<li>cgi</li>
+							<li>email</li>
+						</ul>
+					</p>
+
+					<aside class="notes">
+						So, admittedly, this is a list for Python2.7, and things are better in 3, but 
+						still, this is ridiculous. Their usage is non-obvious and they generally have
+						to be used together. Heaven forbid you actually have to use httplib for some
+						reason.
+						<br>
+						I've actually used all of these at one point or another to deal with HTTP and
+						API interactions on a lower level.
+						(I've used email to parse headers).
+						<br>
+						Also, there's totally a urllib3, and the difference between urllib and urllib2 
+						are... annoying (example: urlencode is only in urllib).
+					</aside>
+				</section>
+
+				<section>
+					<h2>Built-in Python HTTP Modules</h2>
 					<section>
-						<h2>Vertical Slides</h2>
+						<p>
+							What that looks like:
+							<pre>
+								<code data-trim contenteditable>
+import urllib2
+import urllib
+u = urllib2.urlopen("http://www.google.com?" \
+  + urllib.urlencode({"q": "nycpython"}))
+raw_content = u.read()
+								</code>
+							</pre>
+						</p>
+
+						<aside class="notes">
+							This is just for a simple GET, which isn't rough at all, but
+							demonstrates my general point.
+						</aside>
+					</section>
+
+					<section>
+						<p>
+							A delete:
+							<pre>
+								<code data-trim contenteditable>
+handler = urllib2.HTTPHandler()
+opener = urllib2.build_opener(handler)
+request = urllib2.Request("https://graph.facebook.com/videos/4")
+request.add_header("Content-Type", 'application/json')
+request.get_method = lambda: "DELETE"  # because that's obvious
+try:
+    connection = opener.open(request)
+except urllib2.HTTPError,e:
+    connection = e  # a non-200 throws an Error
+								</code>
+							</pre>
+
+							<aside class="notes">
+								So yea... that escalated quickly and nothing in there is pretty.
+								<br>
+								There is an extra step added to handle 302's (urllib2 likes to drop the
+								method you're using on redirect), but that's still pretty rough.
+								<br>
+								It's right about now that you're starting to seriously question your choice.
+								And we haven't even talked SSL, or unicode
+								So, the other option an individual could take is.... REQUESTS!!!
+							</aside>
+						</p>
+					</section>
+				</section>
+
+				<section>
+					<h2>Requests: HTTP for Humans</h2>
+					<p>
+						<img height="550px" src="img/requests_homepage.png">
+
+						<aside class="notes">
+							Requests pretty much lives up to its name and is a sane
+							HTTP library, designed for easy human consumption.
+							<br>
+							And look at those testimonials!
+						</aside>
+					</p>
+				</section>
+
+				<section>
+					<section>
+						<h2>Using Requests</h2>
+						<p>
+							The same GET request from earlier:
+
+							<pre>
+								<code data-trim contenteditable>
+import requests
+u = requests.get("http://www.google.com", params={"q": "nycpython"})
+raw_content = u.content
+								</code>
+							</pre>
+
+							<aside class="notes">
+								It's a little less verbose, but, more importantly, it's
+								easier to remember and a LOT more sane.
+							</aside>
+						</p>
+					</section>
+
+					<section>
+						<p>
+							Now, a delete:
+							<pre>
+								<code data-trim contenteditable>
+import requests
+u = requests.delete("https://graph.facebook.com/videos/4")
+json_response = u.json()
+								</code>
+							</pre>
+
+							<aside class="notes">
+								Ummm... yea. The benefits are pretty clear now.
+								<br>
+								So, we'll carry on with requests.
+							</aside>
+						</p>
+					</section>
+				</section>
+
+				<section>
+					<h2>Starting with the Facebook API</h2>
+					<p>
+						First, you need an app from: 
+						<a href="https://developers.facebook.com/">
+							https://developers.facebook.com/
+						</a>
+
+						<aside class="notes">
+							So, now you'll need to create your own FB app and grab
+							the app ID and the app secret, we'll use those a lot. Take note of
+							the redirect URI you used as well.
+							<br>
+							Toss them in a secret_keys.py file and we're good to go!
+						</aside>
+					</p>
+				</section>
+
+				<section>
+					<h2>The Server-Side OAuth2 Workflow</h2>
+					<ol>
+						<li>Generate Authorization URL based on scopes.</li>
+						<li>Redirect user to Authorization URL.</li>
+						<li>User accepts Facebook's prompt.</li>
+						<li>
+							User is redirected back to the redirect URL we gave Facebook 
+							with a code in the query string.
+						</li>
+						<li>
+							Server privately exchanges that code with Facebook for an
+							access token
+						</li>
+					</ol>
+
+					<aside class="notes">
+						Now, a quick lesson on OAuth2. This is how the server side authorization
+						workflow works for OAuth2 (across the board).
+						<br>
+						The basic concept is we redirect the user to and from a number of places,
+						ensuring the referrer and given destination are fully approved by the
+						app creator. Once the user gets back to us, we are given a non-descript
+						code, which we will combine with our app secret to send to Facebook, in
+						exchange for a real access token.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Building the Authorization URL</h2>
+					<p>
+						This is incredibly trivial:
+						<pre>
+							<code data-trim contenteditable>
+import urllib
+auth_uri = "https://www.facebook.com/dialog/oauth?" + urllib.urlencode({
+  "client_id": APP_ID,
+  "redirect_uri": REDIRECT_URI,
+  "scope": ','.join(("user_photos", "public_profile", "email", "publish_actions")) 
+})
+							</code> 
+						</pre>
+						<aside class="notes">
+							We're going to cheat and use urllib here, but it's all quite simple.
+							<br>
+							Really, the most difficult thing here can be finding the scopes sometimes
+							(Google loves to hide them), but the scopes listed here should let you publish
+							videos and photos, fetch photos, and view profile information for a FB user.
+						</aside>
+					</p>
+				</section>
+
+				<section>
+					<h2>Authorize It</h2>
+					<p>
+						I love Python:
+						<pre>
+							<code data-trim contenteditable>
+from webbrowser import open as wopen
+wopen(auth_uri)
+							</code> 
+						</pre>
+						<aside class="notes">
+							So yea, this should open your browser, take you to FB and display
+							the super familiar OAuth prompt dialog. 
+							<br>
+							Upon return, you'll notice there's a code query string parameter 
+							in the URL we were redirected to, grab that.
+						</aside>
+					</p>
+				</section>
+
+				<section>
+					<section>
+						
 						<p>Slides can be nested inside of each other.</p>
 						<p>Use the <em>Space</em> key to navigate through all slides.</p>
 						<br>
@@ -78,13 +455,6 @@
 							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(180deg);">
 						</a>
 					</section>
-				</section>
-
-				<section>
-					<h2>Slides</h2>
-					<p>
-						Not a coder? Not a problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slides.com" target="_blank">http://slides.com</a>.
-					</p>
 				</section>
 
 				<section>
