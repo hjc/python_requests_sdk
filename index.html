@@ -61,10 +61,21 @@
 								Build cool projects for interesting clients.
 							</li>
 						</ul>	
+						<aside class="notes">
+							Clients: Google and NASA.
+						</aside>
 					</p>
-					<aside class="notes">
-						Remember, we're fucking hiring backend engineers. Engineers and Junior Engineers, Python and PHP.
-					</aside>
+				</section>
+
+				<section>
+					<h2>What We'll Cover</h2>
+					<p>
+						<ol>
+							<li>What is an SDK and an API anyway?</li>
+							<li>How should I interact with an API?</li>
+							<li>How do I build my own SDK?</li>
+						</ol>
+					</p>
 				</section>
 
 				<!-- Example of nested vertical slides -->
@@ -125,7 +136,7 @@
 
 				<section>
 					<h2>Facebook's "Python SDK"</h2>
-					<img src="img/facebook_sdks.png" height="575px;">
+					<img src="img/facebook_sdks.png" style="max-height: 575px;">
 
 					<aside class="notes">
 						So, one begins to look for a FB SDK and this is what they find.
@@ -162,7 +173,8 @@
 							<br>
 							<br>
 							It's likely these are forks of an unsuccessful original FB SDK. The only updates
-							that have happened are documentation changes.
+							that have happened are documentation changes. Finally, they don't have full feature
+							support and development is dead.
 						</aside>
 					</p>
 				</section>
@@ -291,7 +303,7 @@ except urllib2.HTTPError,e:
 				<section>
 					<h2>Requests: HTTP for Humans</h2>
 					<p>
-						<img height="550px" src="img/requests_homepage.png">
+						<img style="max-height: 550px" src="img/requests_homepage.png">
 
 						<aside class="notes">
 							Requests pretty much lives up to its name and is a sane
@@ -373,7 +385,7 @@ json_response = u.json()
 						</li>
 						<li>
 							Server privately exchanges that code with Facebook for an
-							access token
+							access token.
 						</li>
 					</ol>
 
@@ -423,325 +435,295 @@ from webbrowser import open as wopen
 wopen(auth_uri)
 							</code> 
 						</pre>
+
+						<img src="img/exchange_code.png">
+
 						<aside class="notes">
 							So yea, this should open your browser, take you to FB and display
 							the super familiar OAuth prompt dialog. 
 							<br>
 							Upon return, you'll notice there's a code query string parameter 
-							in the URL we were redirected to, grab that.
+							in the URL we were redirected to, grab that. Ignore #_#_
 						</aside>
 					</p>
 				</section>
 
 				<section>
-					<section>
-						
-						<p>Slides can be nested inside of each other.</p>
-						<p>Use the <em>Space</em> key to navigate through all slides.</p>
-						<br>
-						<a href="#" class="navigate-down">
-							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 1</h2>
-						<p>Nested slides are useful for adding additional detail underneath a high level horizontal slide.</p>
-					</section>
-					<section>
-						<h2>Basement Level 2</h2>
-						<p>That's it, time to go back up.</p>
-						<br>
-						<a href="#/2">
-							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(180deg);">
-						</a>
-					</section>
-				</section>
-
-				<section>
-					<h2>Point of View</h2>
+					<h2>Exchange the Code for an Access Token</h2>
 					<p>
-						Press <strong>ESC</strong> to enter the slide overview.
-					</p>
-					<p>
-						Hold down alt and click on any element to zoom in on it using <a href="http://lab.hakim.se/zoom-js">zoom.js</a>. Alt + click anywhere to zoom back out.
+						<pre>
+							<code data-trim contenteditable>
+url = "https://graph.facebook.com/oauth/access_token"
+p = {
+    "client_id": APP_ID,
+    "redirect_uri": REDIRECT_URI,
+    "client_secret": APP_SECRET,
+    "code": code
+}
+resp = requests.get(url, params=p)
+data = dict(urlparse.parse_qsl(resp.text))
+access_token = data["access_token"]
+							</code>
+						</pre>
+						<aside class="notes">
+							Now thing's get a little more interesting, but still not too rough
+							<br>
+							We have to break out urlparse here to get a nice dictionary.
+							Because FB gives us this:
+							access_token=TOK&expires=EXP
+							<br>
+							This dictionary has the "access_token" and "expires" keys. Former is
+							obvious, the latter is actually the number of seconds until the token
+							expires, and not a timestamp.
+						</aside>
 					</p>
 				</section>
 
 				<section>
-					<h2>Touch Optimized</h2>
+					<h2>Fetching Your Profile Info</h2>
 					<p>
-						Presentations look great on touch devices, like mobile phones and tablets. Simply swipe through your slides.
+						<pre>
+							<code data-trim contenteditable>
+params = {'access_token': access_token}
+resp = requests.get("https://graph.facebook.com/v2.2/me", params=params)
+data = resp.json()
+							</code>
+						</pre>
+						<aside class="notes">
+							We'll do the easy task of first just fetching your own profile info.
+							FB makes this delightfully easy with a nice little me endpoint.
+							They also now return in a sane data format! JSON!
+						</aside>
 					</p>
 				</section>
 
-				<section data-markdown>
-					<script type="text/template">
-						## Markdown support
-
-						Write content using inline or external Markdown.
-						Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
-
-						```
-						<section data-markdown>
-						  ## Markdown support
-
-						  Write content using inline or external Markdown.
-						  Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
-						</section>
-						```
-					</script>
-				</section>
-
 				<section>
-					<section id="fragments">
-						<h2>Fragments</h2>
-						<p>Hit the next arrow...</p>
-						<p class="fragment">... to step through ...</p>
-						<p><span class="fragment">... a</span> <span class="fragment">fragmented</span> <span class="fragment">slide.</span></p>
+					<h2>The Result</h2>
+					<pre>
+							<code data-trim contenteditable>
+{
+    'timezone': -4,
+    'locale': 'en_US',
+    'first_name': 'Hayden',
+    'id': '983166765027138',
+    'name': 'Hayden Chudy',
+    'gender': 'male',
+    'last_name': 'Chudy',
+    'link': 'https://www.facebook.com/app_scoped_user_id/983166765027138/',
+    'email': 'hjc1710@gmail.com',
+    'updated_time': '2015-02-03T21:22:01+0000',
+    'verified': True
+}
+							</code>
+						</pre>
 
 						<aside class="notes">
-							This slide has fragments which are also stepped through in the notes window.
+							Nice and simple. However we just needed the access token and we could
+							freely go from there. It would be quite nice to have some extra security.
 						</aside>
+				</section>
+
+				<section>
+					<section>
+						<h2>The App Secret Proof</h2>
+						<p>
+							<ul>
+								<li>An option in the developers console.</li>
+								<li>Once enabled a new 'appsecret_proof' query param is needed for all server requests.</li>
+							</ul>
+							<aside class="notes">
+								Enter the app secret proof. You have to enable in this in the developer console
+								on FB's side, but you can make it so all server-side requests require an
+								app secret. Once we enable this, if we repeat the previous request, we'll get a
+								nice 403 and an OAuth error 100.
+
+								This is one of the things that pythonforfacebook does not support.
+							</aside>
+						</p>
 					</section>
 					<section>
-						<h2>Fragment Styles</h2>
-						<p>There's different types of fragments, like:</p>
-						<p class="fragment grow">grow</p>
-						<p class="fragment shrink">shrink</p>
-						<p class="fragment roll-in">roll-in</p>
-						<p class="fragment fade-out">fade-out</p>
-						<p class="fragment current-visible">current-visible</p>
-						<p class="fragment highlight-red">highlight-red</p>
-						<p class="fragment highlight-blue">highlight-blue</p>
-					</section>
-				</section>
-
-				<section id="transitions">
-					<h2>Transition Styles</h2>
-					<p>
-						You can select from different transitions, like: <br>
-						<a href="?transition=none#/transitions">None</a> -
-						<a href="?transition=fade#/transitions">Fade</a> -
-						<a href="?transition=slide#/transitions">Slide</a> -
-						<a href="?transition=convex#/transitions">Convex</a> -
-						<a href="?transition=concave#/transitions">Concave</a> -
-						<a href="?transition=zoom#/transitions">Zoom</a>
-					</p>
-				</section>
-
-				<section id="themes">
-					<h2>Themes</h2>
-					<p>
-						reveal.js comes with a few themes built in: <br>
-						<!-- Hacks to swap themes after the page has loaded. Not flexible and only intended for the reveal.js demo deck. -->
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/black.css'); return false;">Black (default)</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/white.css'); return false;">White</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/league.css'); return false;">League</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/sky.css'); return false;">Sky</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/beige.css'); return false;">Beige</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/simple.css'); return false;">Simple</a> <br>
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/serif.css'); return false;">Serif</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/night.css'); return false;">Night</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/moon.css'); return false;">Moon</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/solarized.css'); return false;">Solarized</a>
-					</p>
-				</section>
-
-				<section>
-					<section data-background="#dddddd">
-						<h2>Slide Backgrounds</h2>
+						<h2>The App Secret Proof</h2>
+						<pre>
+							<code data-trim contenteditable>
+import hashlib
+import hmac
+appsecret_proof = hmac.new(
+    APP_SECRET, 
+    access_token, 
+    hashlib.sha256
+).hexdigest()
+							</code>
+						</pre>
+						
 						<p>
-							Set <code>data-background="#dddddd"</code> on a slide to change the background color. All CSS color formats are supported.
+							<aside class="notes">
+								The app secret proof is made by hashing your access token, using your
+								App secret, as the key. Now we will append that to all of our future GET requests.
+								Differs for everyone, prevents against rainbow attacks or what have you.
+							</aside>
 						</p>
-						<a href="#" class="navigate-down">
-							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
 					</section>
-					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png">
-						<h2>Image Backgrounds</h2>
-						<pre><code>&lt;section data-background="image.png"&gt;</code></pre>
-					</section>
-					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png" data-background-repeat="repeat" data-background-size="100px">
-						<h2>Tiled Backgrounds</h2>
-						<pre><code style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
-					</section>
-					<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm" data-background-color="#000000">
-						<div style="background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px;">
-							<h2>Video Backgrounds</h2>
-							<pre><code style="word-wrap: break-word;">&lt;section data-background-video="video.mp4,video.webm"&gt;</code></pre>
-						</div>
-					</section>
-				</section>
+					<section>
+						<h2>A Repeat</h2>
+						<pre>
+							<code data-trim contenteditable>
+params = {'access_token': access_token, 'appsecret_proof': appsecret_proof}
+resp = requests.get("https://graph.facebook.com/v2.2/me", params=params)
+data = resp.json()
+							</code>
+						</pre>
 
-				<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
-					<h2>Background Transitions</h2>
-					<p>
-						Different background transitions are available via the backgroundTransition option. This one's called "zoom".
-					</p>
-					<pre><code>Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
-				</section>
-
-				<section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
-					<h2>Background Transitions</h2>
-					<p>
-						You can override background transitions per-slide.
-					</p>
-					<pre><code style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
+						<aside class="notes">
+							Now that we've added our appsecret proof, everything goes according to plan.
+						</aside>
+					</section>
 				</section>
 
 				<section>
-					<h2>Pretty Code</h2>
-					<pre><code data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
+					<section>
+						<h2>The Fields API</h2>
+						<p>
+							<pre>
+								<code data-trim contenteditable>
+url = "https://graph.facebook.com/v2.2/me?fields=albums.fetch(5){id}"
+resp = requests.get(url, params=params)
+								</code>
+							</pre>
+							<aside class="notes">
+								Now, onto something more fun. We'll use the fields API to fetch and
+								paginate some photos. FB has this cool functionality where we can just
+								continue to hit the me endpoint and then specify what. Now, all we get
+								in return are pagination links, and the ID's. We can now individually
+								specify what fields we want all the time
+							</aside>
+						</p>
+					</section>
+					<section>
+						<h2>One Step Further</h2>
+						<pre>
+								<code data-trim contenteditable>
+url = "https://graph.facebook.com/v2.2/me?"
+url += "fields=albums.fetch(5){id,photos.fetch(5){source, id}}"
+resp = requests.get(url, params=params)
+photo = resp.json()['albums']['data'][0]['photos']['data'][0]
+								</code>
+							</pre>
+						<aside class="notes">
+							The fields API supports addressing nested resources as well, here, we'll
+							fetch our first 5 albums, and then the first 5 photos from those albums. But,
+							we'll only fetch the link and id from the photos. And that's what is returned,
+							it's all very predictable, all the wrappers and the storage structures are the
+							same. 'data' and 'paging', then '$resource_name'.
+						</aside>
+					</section>
 
-    var nodes = document.querySelectorAll( selector );
-
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
-
-      if( !node.className ) {
-        node.className += ' roll';
-      }
-    }
-  }
+					<section>
+						<pre>
+								<code data-trim contenteditable>
+{
+    'created_time': '2015-03-13T15:34:58+0000',
+    'id': '976486925695122',
+    'source': 'https://scontent.xx.fbcdn.net/hphotos-xpa1/v/t1.0-9/10525958_976486925695122_844676533185672955_n.jpg?oh=ea15800e5c1038cce6962b69e66c03da&oe=55B1CBF3'
 }
-					</code></pre>
-					<p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
+								</code>
+							</pre>
+							<aside class="notes">
+								Tada! We now have the single photo we were looking for, and with the
+								smallest number of fields. The fields API is rather powerful and lets
+								you fetch the exact data pieces you want. It's perfect for serious querying.
+							</aside>
+					</section>
 				</section>
 
 				<section>
-					<h2>Marvelous List</h2>
+					<section>
+						<h2>Downloading Through Requests</h2>
+						<pre>
+							<code data-trim contenteditable>
+link = photo['source']
+							</code>
+						</pre>
+
+						<aside class="notes">
+							So, in that last response, you'll notice we got a link back for the photo.
+							Let's download that photo! It should be rather simple.
+						</aside>
+					</section>
+
+					<section>
+						<h2>Downloading Through Requests</h2>
+						<p>
+							<pre>
+								<code data-trim contenteditable>
+file = requests.get(link, stream=True)
+with open("./out.png", 'wb') as out:
+    for chunk in file.iter_content(chunk_size=2048):
+        if chunk:	
+            out.write(chunk)
+            out.flush()
+								</code>
+							</pre>
+							<aside class='notes'>
+								Turns it is rather simple! We just get the link, we don't even need auth params,
+								and then we set stream to True. What stream=True does is it lets us download
+								the file in chunks. So instead of reading the entire file into memory before
+								writing it back to disk, Python will just read smaller chunks. Now, let's upload 
+								a file. Again, all of this has been so damn simple. Would they really make this tough?
+							</aside>
+						</p>
+					</section>
+
+					<section>
+						<h2>Uploading Through Requests</h2>
+
+						<pre>
+							<code data-trim contenteditable>
+form_data = {
+    'message': "NYC Python Is Great",
+    'privacy[value]': "SELF",
+    'appsecret_proof': appsecret_proof,
+    'access_token': access_token
+}
+
+f = open("./out.png", "rb")
+source_file = {'source': ('out.png', f, 'image/png')}
+url = "https://graph.facebook.com/v2.2/photos"
+resp = requests.post(url, data=form_data, files=source_file, stream=True)
+							</code>
+						</pre>
+
+						<aside class="notes">
+							Turns out the answer is no there. The strangest thing in this entire code
+							example is the value for the source key. Which is really just: filename, file
+							data, mimetype. Which, if you know multipart forms, makes tons of sense.
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<h2>SDK Next Steps</h2>
 					<ul>
-						<li>No order here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-						<li>Or here</li>
+						<li>Roll all of that up into helper functions.</li>
+						<li>Create a good, reusable request object.</li>
+						<li>Cover every endpoint in the API reference.</li>
+						<li>Release SDK.</li>
+						<li>Maintain SDK.</li>
 					</ul>
 				</section>
 
 				<section>
-					<h2>Fantastic Ordered List</h2>
+					<h2>That's All Folks!</h2>
+
 					<ol>
-						<li>One is smaller than...</li>
-						<li>Two is smaller than...</li>
-						<li>Three!</li>
+						<li>Twitter: <a href="https://twitter.com/hjc1710">@hjc1710</a></li>
+						<li>GitHub: <a href="https://github.com/hjc1710">hjc1710</a></li>
+						<li>Slides: <a href="https://github.com/hjc1710/python_requests_sdk">https://github.com/hjc1710/python_requests_sdk</a></li>
 					</ol>
-				</section>
-
-				<section>
-					<h2>Tabular Tables</h2>
-					<table>
-						<thead>
-							<tr>
-								<th>Item</th>
-								<th>Value</th>
-								<th>Quantity</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>Apples</td>
-								<td>$1</td>
-								<td>7</td>
-							<tr>
-							<tr>
-								<td>Lemonade</td>
-								<td>$2</td>
-								<td>18</td>
-							<tr>
-							<tr>
-								<td>Bread</td>
-								<td>$3</td>
-								<td>2</td>
-							<tr>
-						</tbody>
-					</table>
-				</section>
-
-				<section>
-					<h2>Clever Quotes</h2>
-					<p>
-						These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
-					</p>
-					<blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
-						reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
-					</blockquote>
-				</section>
-
-				<section>
-					<h2>Intergalactic Interconnections</h2>
-					<p>
-						You can link between slides internally,
-						<a href="#/2/3">like this</a>.
-					</p>
-				</section>
-
-				<section>
-					<h2>Speaker View</h2>
-					<p>There's a <a href="https://github.com/hakimel/reveal.js#speaker-notes">speaker view</a>. It includes a timer, preview of the upcoming slide as well as your speaker notes.</p>
-					<p>Press the <em>S</em> key to try it out.</p>
 
 					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
+						Remember, we're hiring backend engineers. Junior Engineers, Python and PHP.
 					</aside>
 				</section>
-
-				<section>
-					<h2>Export to PDF</h2>
-					<p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, here's an example:</p>
-					<iframe src="//www.slideshare.net/slideshow/embed_code/42840540" width="445" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:3px solid #666; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
-				</section>
-
-				<section>
-					<h2>Global State</h2>
-					<p>
-						Set <code>data-state="something"</code> on a slide and <code>"something"</code>
-						will be added as a class to the document element when the slide is open. This lets you
-						apply broader style changes, like switching the page background.
-					</p>
-				</section>
-
-				<section data-state="customevent">
-					<h2>State Events</h2>
-					<p>
-						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
-					</p>
-					<pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
-Reveal.addEventListener( 'customevent', function() {
-	console.log( '"customevent" has fired' );
-} );
-					</code></pre>
-				</section>
-
-				<section>
-					<h2>Take a Moment</h2>
-					<p>
-						Press B or . on your keyboard to pause the presentation. This is helpful when you're on stage and want to take distracting slides off the screen.
-					</p>
-				</section>
-
-				<section>
-					<h2>Much more</h2>
-					<ul>
-						<li>Right-to-left support</li>
-						<li><a href="https://github.com/hakimel/reveal.js#api">Extensive JavaScript API</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js#auto-sliding">Auto-progression</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js#parallax-background">Parallax backgrounds</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
-					</ul>
-				</section>
-
-				<section style="text-align: left;">
-					<h1>THE END</h1>
-					<p>
-						- <a href="http://slides.com">Try the online editor</a> <br>
-						- <a href="https://github.com/hakimel/reveal.js">Source code &amp; documentation</a>
-					</p>
-				</section>
-
 			</div>
 
 		</div>
